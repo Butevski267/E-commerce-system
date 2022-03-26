@@ -1,0 +1,30 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block title %}Customers{% endblock %}
+{% block content %}
+    <h1>Customers</h1>
+    {% if not all_customers %}
+        <p>The database is empty</p>
+    {% else %}
+        <ol>
+            {% for customer in all_customers %}
+                <li>
+                    {{customer['first_name']}}
+                    {{customer['last_name']}} | {{customer['email']}} |
+                    {{customer['credit_card']}} | {{customer['address']}}  | {{customer['date']}}
+                    <a href="{{ url_for('delete_customer', id=customer.id) }}"> Delete</a>
+                </li>
+            {% endfor %}
+        </ol>
+    {% endif %}
+     <a href="{{ url_for('home') }}">Home</a>
+
+{% endblock %}
