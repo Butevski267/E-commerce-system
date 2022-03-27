@@ -5,26 +5,41 @@
   {{ super() }}
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 {% endblock %}
 
 {% block title %}Customers{% endblock %}
+
 {% block content %}
-    <h1>Customers</h1>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{url_for('home')}}">E-commerce</a>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav ml-auto">
+                <a class="nav-item nav-link active" href="{{ url_for('home') }}">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-item nav-link" href="{{ url_for('customers') }}">Customers</a>
+                <a class="nav-item nav-link" href="{{ url_for('products') }}">Products</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <h1>List of all customers:</h1><br>
+    </div>
+
     {% if not all_customers %}
         <p>The database is empty</p>
     {% else %}
         <ol>
             {% for customer in all_customers %}
                 <li>
-                    {{customer['first_name']}}
-                    {{customer['last_name']}} | {{customer['email']}} |
-                    {{customer['credit_card']}} | {{customer['address']}}  | {{customer['date']}}
-                    <a href="{{ url_for('delete_customer', id=customer.id) }}"> Delete</a>
+                    <h4>
+                        {{customer['first_name']}}
+                        {{customer['last_name']}} | {{customer['email']}} |
+                        {{customer['credit_card']}} | {{customer['address']}}  | {{customer['date']}}
+                        <a class="alert-light" href="{{ url_for('delete_customer', id=customer.id) }}">   Delete</a>
+                    </h4>
                 </li>
             {% endfor %}
         </ol>
     {% endif %}
-     <a href="{{ url_for('home') }}">Home</a>
 
 {% endblock %}

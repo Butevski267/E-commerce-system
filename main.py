@@ -22,7 +22,7 @@ import requests
 #def currency_api(from_to):
 #    URL = 'https://free.currconv.com/api/v7/convert'
 #    parameters = {
-#       'apiKey': '8cfa0a5cc9d4320bdc6e',
+#       'apiKey': 'your api key',
 #       'q': from_to,
 #       'compact':'ultra'
 #   }
@@ -88,7 +88,6 @@ class Add_Customer(FlaskForm):
     submit = SubmitField('Submit',validators=[DataRequired()])
 
     def validate_credit_card(self, credit_card):
-
         if not credit_card.data.isnumeric():
             raise ValidationError("Field must not contain characters. Only numbers.")
         elif (int(credit_card.data[0]) != 5) and (int(credit_card.data[0]) != 4) and (int(credit_card.data[0]) != 6):
@@ -100,6 +99,9 @@ class Add_Customer(FlaskForm):
         for i in range(size-3):
             if n[i] == n[i + 1] and n[i + 1] == n[i + 2] and n[i + 2] == n[i + 3]:
                 raise ValidationError("Invalid credit card number. It must not have more than 4 consecutive digits.")
+
+
+
 
 class Add_Product(FlaskForm):
     title = StringField('Title:', validators=[DataRequired()])
