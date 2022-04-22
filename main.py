@@ -10,7 +10,7 @@ import requests
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.orm import Session
-from sqlalchemy import update
+from sqlalchemy import update, and_
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'k454jlfsk123djfo321ij391dfa28'
 Bootstrap(app)
@@ -100,8 +100,52 @@ class Add_Customer(FlaskForm):
             if n[i] == n[i + 1] and n[i + 1] == n[i + 2] and n[i + 2] == n[i + 3]:
                 raise ValidationError("Invalid credit card number. It must not have more than 4 consecutive digits.")
 
+    def validate_city(self,city):
+        input_address = str(self.street_name.data) + ', ' + str(self.zip_code.data) + ', ' + str(
+            self.city.data) + ', ' + str(self.state.data)
+        exists = db.session.query(Customer).filter(
+            Customer.first_name.like(self.first_name.data),
+            Customer.last_name.like(self.last_name.data),
+            Customer.address.like(input_address)
+        ).first()
+        if exists:
+            raise ValidationError("This user can't have more than one address")
 
+    def validate_zip_code(self, zip_code):
+        input_address = str(self.street_name.data) + ', ' + str(zip_code.data) + ', ' + str(
+            self.city.data) + ', ' + str(self.state.data)
+        exists = db.session.query(Customer).filter(
+            Customer.first_name.like(self.first_name.data),
+            Customer.last_name.like(self.last_name.data),
+            Customer.address.like(input_address)
+        ).first()
 
+        if exists:
+            raise ValidationError("This user can't have more than one address")
+
+    def validate_street_name(self, street_name   ):
+        input_address = str(street_name.data) + ', ' + str(self.zip_code.data) + ', ' + str(
+            self.city.data) + ', ' + str(self.state.data)
+        exists = db.session.query(Customer).filter(
+            Customer.first_name.like(self.first_name.data),
+            Customer.last_name.like(self.last_name.data),
+            Customer.address.like(input_address)
+        ).first()
+
+        if exists:
+            raise ValidationError("This user can't have more than one address")
+
+    def validate_state(self, state):
+        input_address = str(self.street_name.data) + ', ' + str(self.zip_code.data) + ', ' + str(
+            self.city.data) + ', ' + str(state.data)
+        exists = db.session.query(Customer).filter(
+            Customer.first_name.like(self.first_name.data),
+            Customer.last_name.like(self.last_name.data),
+            Customer.address.like(input_address)
+        ).first()
+
+        if exists:
+            raise ValidationError("This user can't have more than one address")
 
 class Add_Product(FlaskForm):
     title = StringField('Title:', validators=[DataRequired()])
@@ -183,6 +227,8 @@ def add_customer():
     form = Add_Customer()
     if form.validate_on_submit():
         today = datetime.now().strftime("%d/%m/%Y  %H:%M:%S")
+
+
         new_customer=Customer(first_name = form.first_name.data,
                               last_name= form.last_name.data,
                               email = form.email.data,
@@ -199,9 +245,12 @@ def add_product():
     form = Add_Product()
 
     if form.validate_on_submit():
-        exists = db.session.query(db.exists().where(Product.title == form.title.data and
-                                                    Product.category == form.category.data and
-                                                    Product.size == form.size.data)).scalar()
+        exists = db.session.query(Product).filter(
+                    Product.title.like(form.title.data),
+                    Product.category.like(form.category.data),
+                    Product.size.like(form.size.data)
+        ).first()
+
         if not exists:
             new_product=Product(title = form.title.data,
                                   category= form.category.data,
@@ -213,10 +262,11 @@ def add_product():
             db.session.commit()
             return redirect(url_for('home'))
         else:
-            product_to_update = Product.query.filter_by(title=form.title.data).first()
-            product_to_update.quantity = product_to_update.quantity+1
+            exists.quantity = exists.quantity+1
+            exists.price = form.price.data
+            exists.currency = form.currency.data
             db.session.commit()
-            print(product_to_update)
+            #print(product_to_update)
             return redirect(url_for('home'))
     return render_template('add_product.html',form=form)
 
