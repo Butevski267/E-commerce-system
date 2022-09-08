@@ -6,13 +6,14 @@ from wtforms import StringField, SubmitField, IntegerField, FloatField, RadioFie
 from wtforms.validators import DataRequired, email, NumberRange, Length, ValidationError
 import requests
 import sqlite3
+import os
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.orm import Session
 from sqlalchemy import update, and_
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'k454jlfsk123djfo321ij391dfa28'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 Bootstrap(app)
 
 
